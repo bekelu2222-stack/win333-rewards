@@ -1,165 +1,49 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Win333 Rewards</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WIN333 Rewards</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
   <style>
-    * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      padding: 20px;
-      background: #101827;
+      padding: 25px;
+      background: #101d32;
       color: white;
       font-family: Arial, sans-serif;
-    }
-
-    .container {
-      max-width: 450px;
-      margin: auto;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header h2 { color: #42e6a4; }
-
-    .card {
-      background: #1d2b40;
-      padding: 22px;
-      border-radius: 18px;
-      margin-top: 20px;
-    }
-
-    .balance {
       text-align: center;
-      background: linear-gradient(135deg,#087c62,#164b73);
     }
-
-    .coins {
-      font-size: 38px;
-      font-weight: bold;
-      margin: 12px;
-      color: #ffe36e;
+    .card {
+      background: #1b2e49;
+      padding: 25px;
+      border-radius: 18px;
+      margin-top: 40px;
     }
-
     button {
       width: 100%;
+      padding: 16px;
+      background: #2498ed;
       border: 0;
       border-radius: 12px;
-      padding: 15px;
-      margin-top: 12px;
+      color: white;
       font-size: 16px;
       font-weight: bold;
-      background: #42e6a4;
-      color: #10251e;
-      cursor: pointer;
+      margin-top: 20px;
     }
-
-    .secondary {
-      background: #30445e;
-      color: white;
-    }
-
-    .item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .item button {
-      width: auto;
-      margin: 0;
-      padding: 10px 15px;
-    }
-
-    .muted { color: #aebbd0; }
-
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      color: #aebbd0;
-      font-size: 13px;
-    }
+    #status { color: #8ce5a8; }
   </style>
 </head>
-
 <body>
-  <main class="container">
-
-    <div class="header">
-      <h2>🏆 WIN333</h2>
-      <span>⭐ Rewards</span>
-    </div>
-
-    <div class="card">
-      <h3>Welcome, <span id="username">Friend</span>!</h3>
-      <p class="muted">Welcome to Win333 Rewards</p>
-    </div>
-
-    <div class="card balance">
-      <p>Your coin balance</p>
-      <div class="coins">🪙 <span id="coins">0</span></div>
-      <p>Win333 Coins</p>
-    </div>
-
-    <div class="card">
-      <h3>🎁 Daily Check-in</h3>
-      <p class="muted">Collect your daily reward.</p>
-      <button id="checkin" onclick="checkIn()">
-        Claim Daily Reward
-      </button>
-    </div>
-
-    <div class="card">
-      <h3>💰 Earn Coins</h3>
-
-      <div class="item">
-        <span>Daily reward</span>
-        <span>+100</span>
-      </div>
-
-      <div class="item">
-        <span>Invite a friend</span>
-        <span>+500</span>
-      </div>
-
-      <div class="item">
-        <span>Complete tasks</span>
-        <span>Coming soon</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>👥 Invite Friends</h3>
-      <p class="muted">
-        Invite friends and earn bonus coins.
-      </p>
-      <button onclick="inviteFriends()">
-        Invite Friends
-      </button>
-    </div>
-
-    <div class="card">
-      <h3>🏅 Leaderboard</h3>
-      <p class="muted">Top players coming soon!</p>
-    </div>
-
-    <div class="footer">
-      Win333 Rewards © 2026
-    </div>
-
-  </main>
+  <div class="card">
+    <h1>WIN333 REWARDS</h1>
+    <h2>Welcome!</h2>
+    <p id="name">Loading Telegram account...</p>
+    <p id="username"></p>
+    <p id="status">Phone verification required</p>
+    <button id="share">SHARE MY PHONE NUMBER</button>
+  </div>
 
   <script>
     const tg = window.Telegram.WebApp;
@@ -168,54 +52,31 @@
 
     const user = tg.initDataUnsafe?.user;
 
-    if (user?.first_name) {
+    if (user) {
+      document.getElementById("name").textContent =
+        "Name: " + user.first_name;
       document.getElementById("username").textContent =
-        user.first_name;
+        user.username ? "@" + user.username : "No username";
+    } else {
+      document.getElementById("name").textContent =
+        "Please open this app through Telegram.";
     }
 
-    let balance = 0;
-    let claimed = false;
-
-    function updateBalance() {
-      document.getElementById("coins").textContent = balance;
-    }
-
-    function checkIn() {
-      if (claimed) {
-        alert("You already claimed today's reward!");
+    document.getElementById("share").onclick = function() {
+      if (!user) {
+        tg.showAlert("Open this Mini App through Telegram first.");
         return;
       }
-
-      balance += 100;
-      claimed = true;
-      updateBalance();
-
-      document.getElementById("checkin").textContent =
-        "Reward Claimed ✓";
-    }
-
-    function inviteFriends() {
-      const bot = "Win333_bot";
-      const link = "https://t.me/" + bot + "?startapp=ref123";
-
-      const share =
-        "Join Win333 Rewards and collect coins! " + link;
-
-      if (tg.initDataUnsafe?.user) {
-        tg.openTelegramLink(
-          "https://t.me/share/url?url=" +
-          encodeURIComponent(link) +
-          "&text=" +
-          encodeURIComponent("Join Win333 Rewards!")
-        );
-      } else if (navigator.share) {
-        navigator.share({ title: "Win333 Rewards", text: share });
-      } else {
-        alert(link);
-      }
-    }
-
-    updateBalance();
+      tg.requestContact(function(shared) {
+        if (shared) {
+          document.getElementById("status").textContent =
+            "Contact shared. Server verification is still required.";
+          tg.showAlert("Contact received. Please wait for secure verification.");
+        } else {
+          tg.showAlert("Phone number sharing is required.");
+        }
+      });
+    };
   </script>
 </body>
 </html>
